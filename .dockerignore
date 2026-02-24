@@ -1,0 +1,37 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.docker
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# Maven
+target
+
+# Documentation
+README.md
+HELP.md
+docs/
+
+# CI/CD
+.github
+Jenkinsfile
+
+# Logs
+*.log
+logs/
+
+# Tests
+src/test
+
+# Environment
+.env
+.env.*
+
