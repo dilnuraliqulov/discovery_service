@@ -1,0 +1,103 @@
+server:
+  port: 8761
+
+spring:
+  security:
+    user:
+      name: admin
+      password: admin123
+  application:
+    name: discovery-service
+  profiles:
+    active: dev
+
+# Eureka Server Configuration
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    # Standalone mode - don't register itself and don't fetch registry
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    # Disable self-preservation in development (enable in production)
+    enable-self-preservation: ${EUREKA_SELF_PRESERVATION:false}
+    # Interval for evicting instances
+    eviction-interval-timer-in-ms: 5000
+    # Response cache update interval
+    response-cache-update-interval-ms: 5000
+    # Wait time for sync with other replicas
+    wait-time-in-ms-when-sync-empty: 5
+
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.example.demo: DEBUG
+    com.netflix.eureka: INFO
+    com.netflix.discovery: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{transactionId}] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{transactionId}] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/discovery-service.log
+    max-size: 10MB
+    max-history: 30
+
+# Management/Actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+# Application Info
+info:
+  app:
+    name: Discovery Service
+    description: Eureka Service Discovery for Microservices Architecture
+    version: 1.0.0
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+eureka:
+  server:
+    enable-self-preservation: false
+
+logging:
+  level:
+    root: DEBUG
+    com.netflix.eureka: DEBUG
+    com.netflix.discovery: DEBUG
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+eureka:
+  server:
+    enable-self-preservation: true
+
+logging:
+  level:
+    root: WARN
+    com.example.demo: INFO

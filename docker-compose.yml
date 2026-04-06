@@ -1,0 +1,37 @@
+
+services:
+  discovery-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: discovery-service:latest
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - EUREKA_SELF_PRESERVATION=false
+      - EUREKA_SECURITY_USERNAME=admin
+      - EUREKA_SECURITY_PASSWORD=admin
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    volumes:
+      - discovery-logs:/app/logs
+    networks:
+      - gym-network
+    restart: unless-stopped
+
+
+networks:
+  gym-network:
+    external: true
+
+
+volumes:
+  discovery-logs:
+    driver: local
+
